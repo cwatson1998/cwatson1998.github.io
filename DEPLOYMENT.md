@@ -1,35 +1,44 @@
-# Manual Deployment Guide
+# Deployment Notes
 
-Follow these steps whenever you want to publish updates to `https://www.seas.upenn.edu/~ccwatson/`.
+## Current Production Path
 
-## 1. Prerequisites
-- Ruby, Bundler, and Jekyll installed locally; run `bundle install` from the repo root once per environment.
-- SSH access to `ccwatson@eniac.seas.upenn.edu` with write permission to `~/public_html/` (set up `ssh-agent` or be ready for password prompts).
-- Optional: Node.js for updating JavaScript assets (`npm install` then `npm run build:js`).
+The primary live site is:
 
-## 2. Preview Locally (optional)
+- `https://cwatson1998.github.io/`
+
+This repository is the source for that site. In normal usage, publishing happens via GitHub Pages from this repository, not via the Penn web host.
+
+## Penn Hosting Status
+
+The Penn site was previously served from `https://www.seas.upenn.edu/~ccwatson/`, but that path is now legacy. The Penn page currently redirects to the GitHub Pages site.
+
+The script in [`scripts/deploy_public_html.sh`](./scripts/deploy_public_html.sh) is kept only in case you ever want to publish a copy of the generated `_site/` output to Penn hosting again.
+
+## Legacy Manual Deployment
+
+If you ever do want to push the built site to Penn hosting again, the flow is:
+
 ```bash
-bundle exec jekyll serve -l -H localhost --baseurl ''
-```
-Visit `http://localhost:4000` to confirm changes render correctly. Stop the server with `Ctrl+C`.
-
-## 3. Deploy to SEAS Hosting
-```bash
+bundle exec jekyll build
 scripts/deploy_public_html.sh
 ```
-The script:
-1. Builds the production site with `JEKYLL_ENV=production bundle exec jekyll build`.
-2. Syncs the `_site/` output to `ccwatson@eniac.seas.upenn.edu:public_html/` using `rsync --delete` so removed files disappear from the server.
 
-### Custom Targets
-- Set `REMOTE` to deploy from a different workstation or jump host, e.g. `REMOTE=myuser@remote.seas.upenn.edu scripts/deploy_public_html.sh`.
-- Set `REMOTE_PATH` when publishing into a subdirectory: `REMOTE_PATH=public_html/portfolio scripts/deploy_public_html.sh`.
+That script:
 
-## 4. Verify
-1. Open `https://www.seas.upenn.edu/~ccwatson/` in a fresh browser window or private tab.
-2. Check navigation, images, and downloads (especially under `/files/`) to ensure paths resolve with the configured `/~ccwatson` base URL.
+1. Builds the site with `JEKYLL_ENV=production`.
+2. `rsync`s `_site/` to `ccwatson@eniac.seas.upenn.edu:public_html/`.
 
-## 5. Troubleshooting
-- If the build fails, rerun `bundle install` and fix Liquid/YAML errors reported in the console.
-- If assets look stale, delete `_site/` locally and rerun the deploy script.
-- For authentication issues, ensure your SSH key is added with `ssh-add` or try logging in manually via `ssh ccwatson@eniac.seas.upenn.edu` to confirm access.
+Optional overrides:
+
+- `REMOTE=myuser@remote.example.edu scripts/deploy_public_html.sh`
+- `REMOTE_PATH=public_html/custom_dir scripts/deploy_public_html.sh`
+
+## Recommended Verification
+
+For current day-to-day work, verify changes locally first:
+
+```bash
+bundle exec jekyll serve -l -H localhost
+```
+
+Then confirm the live site at `https://cwatson1998.github.io/` after your GitHub Pages publish completes.

@@ -183,6 +183,7 @@ exclude:
   - local
   - log
   - node_modules
+  - old_html_website
   - package.json*
   - Rakefile
   - README

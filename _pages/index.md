@@ -34,8 +34,8 @@ To address this, my research focuses on:
 ## Publications and Preprints {#publications}
 {% for pub in selected_pubs %}
 {% assign authors = pub.citation | split: '. "' | first %}
-{% if pub.paperurl %}- [**{{ pub.title }}**]({{ pub.paperurl }}). {{ authors }}. *{{ pub.venue }}*.
-{% else %}- **{{ pub.title }}**. {{ authors }}. *{{ pub.venue }}*.
+{% if pub.paperurl %}- <a href="{{ pub.paperurl }}"><b>{{ pub.title }}</b></a>. {{ authors }}. *{{ pub.venue }}*.
+{% else %}- <b><u>{{ pub.title }}</u></b>. {{ authors }}. *{{ pub.venue }}*.
 {% endif %}
 {% endfor %}
 
